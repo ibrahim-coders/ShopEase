@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import useAxiosePublic from '../Api';
+import toast from 'react-hot-toast';
 const Login = () => {
+  const navigate = useNavigate();
+  const axiosPublic = useAxiosePublic();
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: '', password: '' });
 
@@ -16,9 +20,20 @@ const Login = () => {
   };
   console.log(data);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    try {
+      const userData = await axiosPublic.post('/api/login', data);
+      navigate('/');
+      toast.success('Login Successfully');
+      console.log(userData);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Login failed. Please try again.';
+      toast.error(errorMessage);
+    }
   };
+
   return (
     <>
       <div className="text-center mt-4">

@@ -1,12 +1,15 @@
 import { useState, useRef } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import imageUpload from '../components/UploadeImage/ImageUploade';
-
+import useAxiosePublic from '../Api';
+import toast from 'react-hot-toast';
 export const Signup = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const axiosPublic = useAxiosePublic();
   const fileInputRef = useRef(null);
   const [data, setData] = useState({
     name: '',
@@ -14,6 +17,7 @@ export const Signup = () => {
     password: '',
     confirmPassword: '',
     image: null,
+    role: 'user',
   });
 
   const handleChange = e => {
@@ -38,19 +42,22 @@ export const Signup = () => {
     fileInputRef.current.click();
   };
   // Form Submit
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     if (!data.name || !data.email || !data.password) {
-      alert('সব ইনপুট পূরণ করুন!');
+      toast.error('সব ইনপুট পূরণ করুন!');
       return;
     }
 
     if (data.password !== data.confirmPassword) {
-      alert('Passwords do not match!');
+      toast.error('Passwords do not match!');
       return;
     }
-
+    const userData = await axiosPublic.post('/api/signup', data);
+    navigate('/');
+    toast.success('user created successful');
+    console.log(userData);
     console.log('Signup Data:', data);
   };
 
