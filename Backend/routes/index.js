@@ -3,6 +3,10 @@ const router = express.Router();
 
 const userSignUp = require('../controller/userSignup');
 const userLogin = require('../controller/userLogin');
+const authToken = require('../middleware/authToken');
+const userDetails = require('../controller/userDetails');
+
 router.post('/signup', userSignUp);
 router.post('/login', userLogin);
+router.get('/users', authToken, userDetails);
 module.exports = router;

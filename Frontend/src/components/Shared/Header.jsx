@@ -2,8 +2,11 @@ import { IoIosSearch } from 'react-icons/io';
 import { LuCircleUser } from 'react-icons/lu';
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
+  const user = useSelector(state => state?.user?.user);
+  console.log(user);
   return (
     <header className="bg-white shadow-lg">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -35,8 +38,15 @@ const Header = () => {
               </div>
 
               <div>
-                {' '}
-                <LuCircleUser className="text-3xl text-orange-600" />
+                {user.image ? (
+                  <img
+                    src={user?.image}
+                    alt="user"
+                    className="roundade- rounded-full w-12 h-12"
+                  />
+                ) : (
+                  <LuCircleUser className="text-3xl text-orange-600" />
+                )}
               </div>
 
               <div className="flex items-center ">

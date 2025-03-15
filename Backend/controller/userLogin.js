@@ -26,7 +26,7 @@ async function userLogin(req, res) {
     const checkPassword = await bcrypt.compare(password, user.password);
     if (!checkPassword) {
       return res.status(401).json({
-        message: 'Please check your password',
+        message: 'Invalid password',
         error: true,
         success: false,
       });
@@ -35,22 +35,30 @@ async function userLogin(req, res) {
     const tokenData = {
       _id: user._id,
       email: user.email,
+      role: user.role || 'user', // If roles are implemented
     };
 
     const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
-      expiresIn: '8h',
+      expiresIn: '8h', // Expiry in 8 hours
     });
+    console.log('Token generated:', token);
 
-    res.cookie('token', token, { httpOnly: true });
+    // Set token in a secure cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Ensure https in production
+      sameSite: 'Strict',
+      maxAge: 8 * 60 * 60 * 1000, // 8 hours
+    });
 
     return res.status(200).json({
       message: 'Login successfully',
-      data: token,
+      data: token, // Return token data (optional)
       error: false,
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error during login:', error.message);
     return res.status(500).json({
       message: 'Something went wrong, please try again later.',
       error: true,

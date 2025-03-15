@@ -5,7 +5,13 @@ const connectDB = require('./config/db');
 const router = require('./routes/index');
 const app = express();
 const cookieParser = require('cookie-parser');
-app.use(cors());
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // ফ্রন্টএন্ড ইউআরএল
+    credentials: true, // ✅ কুকিজ অনুমোদনের জন্য
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api', router);

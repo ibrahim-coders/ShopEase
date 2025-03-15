@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import useAxiosePublic from '../Api';
 import toast from 'react-hot-toast';
+import AuthContact from '../Context/AuthProvider';
 const Login = () => {
   const navigate = useNavigate();
   const axiosPublic = useAxiosePublic();
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: '', password: '' });
+  const fetchDetails = useContext(AuthContact);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -24,7 +26,9 @@ const Login = () => {
     e.preventDefault();
     try {
       const userData = await axiosPublic.post('/api/login', data);
+      fetchDetails();
       navigate('/');
+
       toast.success('Login Successfully');
       console.log(userData);
     } catch (error) {
