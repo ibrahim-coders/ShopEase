@@ -8,8 +8,8 @@ const cookieParser = require('cookie-parser');
 
 app.use(
   cors({
-    origin: 'http://localhost:5173', // ফ্রন্টএন্ড ইউআরএল
-    credentials: true, // ✅ কুকিজ অনুমোদনের জন্য
+    origin: 'http://localhost:5173',
+    credentials: true,
   })
 );
 app.use(express.json());

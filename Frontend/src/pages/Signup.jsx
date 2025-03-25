@@ -17,7 +17,6 @@ export const Signup = () => {
     password: '',
     confirmPassword: '',
     image: null,
-    role: 'user',
   });
 
   const handleChange = e => {

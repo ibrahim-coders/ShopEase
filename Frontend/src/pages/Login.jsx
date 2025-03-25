@@ -3,37 +3,38 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import useAxiosePublic from '../Api';
 import toast from 'react-hot-toast';
-import AuthContact from '../Context/AuthProvider';
+import AuthContext from '../Context/AuthProvider';
+
 const Login = () => {
   const navigate = useNavigate();
   const axiosPublic = useAxiosePublic();
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: '', password: '' });
-  const fetchDetails = useContext(AuthContact);
+  const fetchDetails = useContext(AuthContext);
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setData(preve => {
+    setData(prev => {
       return {
-        ...preve,
+        ...prev,
         [name]: value,
       };
     });
   };
-  console.log(data);
 
   const handleSubmit = async e => {
     e.preventDefault();
+    console.log('Submitting data:', data);
     try {
       const userData = await axiosPublic.post('/api/login', data);
-      fetchDetails();
-      navigate('/');
+      console.log('Response from server:', userData);
 
+      navigate('/');
       toast.success('Login Successfully');
-      console.log(userData);
+      fetchDetails();
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || 'Login failed. Please try again.';
+      console.log('Error during login:', error);
+      const errorMessage = error.response?.data?.message;
       toast.error(errorMessage);
     }
   };
@@ -45,8 +46,8 @@ const Login = () => {
           Shop<span className="text-orange-600">Ease</span>
         </h2>
       </div>
-      <div className="flex  items-center justify-center my-4 md:my-10">
-        <div className="grid grid-cols-1 md:grid-cols-2  overflow-hidden w-full max-w-4xl">
+      <div className="flex items-center justify-center my-4 md:my-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden w-full max-w-4xl">
           {/* Left Side - Image */}
           <div className="hidden md:block">
             <img
@@ -58,10 +59,10 @@ const Login = () => {
 
           {/* Right Side - Login Form */}
           <div className="px-4 md:p-8 flex flex-col justify-center">
-            <h2 className="text-2xl font-bold  mb-6">Login</h2>
+            <h2 className="text-2xl font-bold mb-6">Login</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block  text-sm font-bold mb-2">Email</label>
+                <label className="block text-sm font-bold mb-2">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -72,16 +73,14 @@ const Login = () => {
                 />
               </div>
               <div className="mb-1.5 relative">
-                <label className="block  text-sm font-bold mb-2">
-                  Password
-                </label>
+                <label className="block text-sm font-bold mb-2">Password</label>
                 <input
                   name="password"
                   value={data.password}
                   placeholder="enter your password"
                   onChange={handleChange}
                   type={showPassword ? 'text' : 'password'}
-                  className=" w-full px-4 py-2 border-orange-600 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-400"
+                  className="w-full px-4 py-2 border-orange-600 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-400"
                 />
                 <span>
                   {showPassword ? (
@@ -107,7 +106,7 @@ const Login = () => {
                 Login
               </button>
             </form>
-            <p className=" text-sm mt-4">
+            <p className="text-sm mt-4">
               Don't have an account?{' '}
               <Link to="/register" className="text-orange-500 hover:underline">
                 Sign Up

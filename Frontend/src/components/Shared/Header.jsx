@@ -2,11 +2,27 @@ import { IoIosSearch } from 'react-icons/io';
 import { LuCircleUser } from 'react-icons/lu';
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import useAxiosePublic from '../../Api';
+import { toast } from 'react-hot-toast';
+import { setUserDetails } from '../../store/userSlice';
+import { useState } from 'react';
 const Header = () => {
   const user = useSelector(state => state?.user?.user);
-  console.log(user);
+  const dispatch = useDispatch();
+
+  const axiosPublic = useAxiosePublic();
+  const [isMenuOpen, setMenuOpen] = useState(false);
+  const handleLogout = async () => {
+    try {
+      const data = await axiosPublic.get('/api/logout');
+      console.log(data);
+      dispatch(setUserDetails(null));
+      toast.success('logout successfully');
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
   return (
     <header className="bg-white shadow-lg">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -30,32 +46,58 @@ const Header = () => {
 
           <div className="md:flex md:items-center md:gap-4">
             <div className="flex gap-4">
-              <div className="relative">
-                <FiShoppingCart className="text-3xl md:text-4xl text-orange-600" />
-                <p className="absolute -top-1 right-1 text-xs md:text-sm font-bold  px-1 md:px-2 rounded-full text-gray-900">
-                  0
-                </p>
+              <div class="relative inline-flex items-center justify-center w-10 h-10  rounded-full text-orange-500">
+                <FiShoppingCart className="text-2xl sm:text-3xl text-orange-500 " />
+                <span class="absolute -top-1 -right-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-orange-500 bg-white px-1 text-xs text-orange-600">
+                  7
+                </span>
               </div>
 
-              <div>
-                {user.image ? (
-                  <img
-                    src={user?.image}
-                    alt="user"
-                    className="roundade- rounded-full w-12 h-12"
-                  />
-                ) : (
-                  <LuCircleUser className="text-3xl text-orange-600" />
+              <div className="relative group flex justify-center ">
+                <div
+                  onClick={() => setMenuOpen(!isMenuOpen)}
+                  className="cursor-pointer"
+                >
+                  {user?.image ? (
+                    <img
+                      src={user?.image}
+                      alt="user"
+                      className="roundade- rounded-full w-12 h-12"
+                    />
+                  ) : (
+                    <LuCircleUser className="text-3xl text-orange-600" />
+                  )}
+                </div>
+                {isMenuOpen && (
+                  <div className="absolute bg-white  bottom-0 top-11 h-fit shadow-lg rounded-lg hidden md:block">
+                    <nav>
+                      <Link
+                        to="/deshboard"
+                        className="whitespace-nowrap hover:bg-slate-100 p-2 hidden group-hover:block cursor-pointer"
+                      >
+                        DeshBoard
+                      </Link>
+                    </nav>
+                  </div>
                 )}
               </div>
 
               <div className="flex items-center ">
-                <Link
-                  to="/login"
-                  className="inline-block rounded-sm bg-orange-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-orange-700 focus:ring-3 focus:outline-hidden"
-                >
-                  Login
-                </Link>
+                {user?._id ? (
+                  <button
+                    onClick={handleLogout}
+                    className="inline-block rounded-sm bg-orange-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-orange-700 focus:ring-3 focus:outline-hidden cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="inline-block rounded-sm bg-orange-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-orange-700 focus:ring-3 focus:outline-hidden cursor-pointer"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </div>
           </div>

@@ -25,6 +25,7 @@ async function userSignUp(req, res) {
   }
   const payload = {
     ...req.body,
+    role: 'Admin',
     password: hashPassword,
   };
 
